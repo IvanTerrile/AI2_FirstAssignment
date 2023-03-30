@@ -1,58 +1,80 @@
+;Header and description
 
+(define (domain coffe-bar)
 
-(define (domain coffeeshop)
+;remove requirements that are not needed
+(:requirements :strips :fluents :durative-actions :timed-initial-literals :typing :conditional-effects :negative-preconditions :duration-inequalities :equality :time)
 
-
-    (:requirements :strips :fluents :durative-actions :timed-initial-literals :typing :conditional-effects :negative-preconditions :duration-inequalities :equality :time)
-
-    ; We use types to restrict what objects can form the parameters of an action.
-    ; Types and subtypes allow us to declare both general and specific actions and predicates.
-    (:types
-    )
-
-    ; Predicates apply to a specific type of object, or to all objects.
-    ; predicates are used to encode Boolean state variables (are either true or false at any point in a plan, and when not declared are assumed to be false)
-    (:predicates 
-        (drink ?d)
-        (drink_at_table ?d) ;drink is at the customer table
-        (drink_at_bar ?d)   ;drink is at the bar ready to service
+(:types ;todo: enumerate types and their hierarchy here, e.g. car truck bus - vehicle
+    drink - object;
+    cold - drink;
+    warm - drink;
+    robot- object;
+    barista - robot;
+    waiter - robot;
     
-        (tray_avaible ?t); tray is at the bar
+    bar table - location;
+    
+    tray - object;
 
-        (gripper ?g)
-        (carry ?d ?g)   ;robot is carring something
-        (free ?g)   ; gripper is free
+)
 
+
+(:predicates 
+    (ready ?d-drink)   ;drink is ready to be served
+    (free_barista ?b-barista) ;barista is free to prepare a drink
+    (at_drink ?l-location ?d-drink) ;drink is at location
+    (at_barista ?l-location ) ;barista is at location
+    (at_tray ?l-location ) ;tray is at location
+    (carrying_drink ?w-waiter ?d-drink) ;waiter is carrying drink
+    (carrying_tray ?w-waiter ?t-tray) ;waiter is carrying tray
+    (at_drink_tray ?d-drink ?t-tray) ;drink is on tray
+    (at_waiter ?l-location ) ;waiter is at location
+    (free_waiter ?w-waiter) ;waiter is free 
+    (connected ?l1-location ?l2-location) ;locations are connected
+
+)
+(:functions 
+    (distance ?l1-location ?l2-location) ;distance between locations
+    (distance_covered ?w - waiter);distance covered by waiter
+)
+
+(:durative-action prepare-cold-drink
+    :parameters (?b - barista ?d - cold ?l - bar)
+    :duration (=? duration 3)
+    :condition (and(at start(free_barista ?b))(at start(not(ready ?d))))            
+    :effect (and
+            (at start (not (free_barista ?b)))
+            (at end (ready ?d))
+            (at end (free_barista ?b))
+            (at end (at_drink ?l ?d))
+            )
+  )
+(:durative-action prepare-warm-drink
+    :parameters (?b - barista ?d - warm ?l - bar)
+    :duration (=? duration 5)
+    :condition (and(at start(free_barista ?b))(at start(not(ready ?d))))            
+    :effect (and
+            (at start (not (free_barista ?b)))
+            (at end (ready ?d))
+            (at end (free_barista ?b))
+            (at end (at_drink ?l ?d)))
+            )
+  
+
+(:action pick-drink
+    :parameters (?w - waiter ?d - drink  ?l - bar)
+    :precondition (and (at_drink ?l ?d) (free_waiter ?w)(at_waiter ?l))
+    :effect (and (carrying_drink ?w ?d) (not (at_drink ?l ?d)) (not (free_waiter ?w)))
+)
+(:process move-waiter
+    :parameters (?w - waiter ?from - location ?to - location)
+    :precondition (and
+        (at_waiter ?from ) (connected ?from ?to)
     )
-
-    ; Functions are used to encode numeric state variables.
-    (:functions 
-        (drink_time_cold) ; Threshold for the maximum preparation time drink prepare_cold_drink
-        (drink_time_warm) ; Threshold for the maximum preparation time drink prepare_cold_warm
+    :effect (and
+        ;increase distance covered by waiter
+        (increase (distance_covered ?w) 2) 
     )
-
-
-    (:action prepare_cold_drink ; sbaglaita la gestione del tempo ( probabile ultilizzo di un cilo)
-        :parameters (?d)
-        :precondition (and (= (drink_time_cold) 3))
-        :effect (and (drink_at_bar ?d))
-    )
-
-    (:action prepare_warm_drink ; sbaglaita la gestione del tempo ( probabile ultilizzo di un cilo)
-        :parameters (?d)
-        :precondition (and (= (drink_time_warm) 5))
-        :effect (and (drink_at_bar ?d))
-    )
-
-    (:action pick_drink       
-      :parameters (?d ?g)       
-      :precondition  (and (drink_at_bar ?d) (free ?g))      
-      :effect (and (carry ?d ?g) (not (free ?g)) (not (drink_at_bar ?d)))
-    )
-
-    (:action pick_drink_tray    ;aggiungere la gestione dei 3 drink sul vassoio alla volta
-      :parameters (?d ?g)       
-      :precondition  (and (drink_at_bar ?d) (free ?g) (tray_avaible ?t))      
-      :effect (and (carry ?d ?g) (not (free ?g)) (not (drink_at_bar ?d)) (not (tray_avaible ?t)))
-    )
+)
 )
