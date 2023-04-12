@@ -1,9 +1,9 @@
-;Header and description
+
 
 (define (domain coffe-bar)
 
 ;remove requirements that are not needed
-(:requirements :strips :fluents :durative-actions :timed-initial-literals :typing :conditional-effects :negative-preconditions :duration-inequalities :equality :time)
+(:requirements :fluents :durative-actions :timed-initial-literals :typing :conditional-effects :negative-preconditions :duration-inequalities :equality :time)
 
 (:types ;todo: enumerate types and their hierarchy here, e.g. car truck bus - vehicle
     drink - object;
@@ -12,7 +12,6 @@
     robot- object;
     barista - robot;
     waiter - robot;
-    
     bar table - location;
     
     tray - object;
@@ -31,7 +30,8 @@
     (at_drink_tray ?d-drink ?t-tray) ;drink is on tray
     (at_waiter ?l-location ) ;waiter is at location
     (free_waiter ?w-waiter) ;waiter is free 
-    (connected ?l1-location ?l2-location) ;locations are connected
+    (connected ?l1-location ?l2-location)
+    (served ?d-drink) ;locations are connected
 
 )
 (:functions 
@@ -41,7 +41,7 @@
 
 (:durative-action prepare-cold-drink
     :parameters (?b - barista ?d - cold ?l - bar)
-    :duration (=? duration 3)
+    :duration (= ?duration 3)
     :condition (and(at start(free_barista ?b))(at start(not(ready ?d))))            
     :effect (and
             (at start (not (free_barista ?b)))
@@ -52,7 +52,7 @@
   )
 (:durative-action prepare-warm-drink
     :parameters (?b - barista ?d - warm ?l - bar)
-    :duration (=? duration 5)
+    :duration (= ?duration 5)
     :condition (and(at start(free_barista ?b))(at start(not(ready ?d))))            
     :effect (and
             (at start (not (free_barista ?b)))
@@ -67,14 +67,31 @@
     :precondition (and (at_drink ?l ?d) (free_waiter ?w)(at_waiter ?l))
     :effect (and (carrying_drink ?w ?d) (not (at_drink ?l ?d)) (not (free_waiter ?w)))
 )
-(:process move-waiter
-    :parameters (?w - waiter ?from - location ?to - location)
+(:process MOVE-WAITER
+    :parameters (?w - waiter ?from - location ?to - location ?d - drink)
     :precondition (and
+        (carrying_drink ?w  ?d)
         (at_waiter ?from ) (connected ?from ?to)
     )
     :effect (and
         ;increase distance covered by waiter
-        (increase (distance_covered ?w) 2) 
+        (increase (distance_covered ?w) (* #t 2)) 
     )
 )
+(:event serve-drink
+    :parameters ( ?w - waiter ?d - drink ?l1 - location ?l2 - location)
+    :precondition (and
+        (carrying_drink ?w ?d)
+        (at_waiter ?l2) (at_drink ?l2 ?d)
+        (= (distance_covered ?w) (distance ?l1 ?l2))
+    )
+    :effect (and
+        (not (carrying_drink ?w ?d))
+        (free_waiter ?w)
+        (at_drink ?d ?l2)
+        (at_barista ?l2 )
+        (served ?d)
+    )
+    )
 )
+
