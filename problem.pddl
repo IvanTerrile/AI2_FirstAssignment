@@ -3,8 +3,8 @@
 (:domain coffe-bar)
 (:objects
 r - barista
-drink1 - cold
-drink2 - warm
+drink1 - warm
+drink2 - cold
 drink3 - cold
 l1 - bar
 l2 - table
@@ -18,13 +18,20 @@ w - waiter
 (not(ready drink1))
 (not(ready drink2))
 (not(ready drink3))
+(not(preparing drink1))
+(not(preparing drink2))
+(not(preparing drink3))
 (free_barista r)
 (at_barista l1)
 (not(served drink1))
+
 (connected l1 l2)
 (free_waiter w)
 (=(distance l1 l2) 10)
 (=(distance_covered w) 0)
+(= (duration_drink drink1) 5.0)
+(= (duration_drink drink2) 3.0)
+(= (duration_drink drink3) 3.0)
 
 )
 
@@ -34,6 +41,11 @@ w - waiter
 (ready drink1)
 (ready drink2)
 (ready drink3)
-(served drink1)
+;(served drink1)
+; (served drink2)
+; (served drink3)
+
 ))
+(:metric minimize(total-time)
+)
 )

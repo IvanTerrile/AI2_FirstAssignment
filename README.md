@@ -1,5 +1,5 @@
 # AI2_FirstAssignment
 ## README di prova
 ----------------------------
-ivan riesce a modificare 
-pisi ciao
+per compilare polli!!!!!!!!!!
+java -jar enhsp-20.jar -o domain.pddl -f problem.pddl
