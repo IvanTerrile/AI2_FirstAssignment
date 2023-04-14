@@ -15,51 +15,42 @@
     bar table - location;
     
     tray - object;
-
 )
-
 
 (:predicates 
-    (ready ?d-drink)   ;drink is ready to be served
-    (free_barista ?b-barista) ;barista is free to prepare a drink
+    (ready ?d-drink)    ;drink is ready to be served
+    (free_barista ?b-barista)   ;barista is free to prepare a drink
     (at_drink ?l-location ?d-drink) ;drink is at location
-    (at_barista ?l-location ) ;barista is at location
-    (at_tray ?l-location ) ;tray is at location
-    (carrying_drink ?d-drink) ;waiter is carrying drink
+    (at_barista ?l-location)   ;barista is at location
+    (at_tray ?l-location)   ;tray is at location
+    (carrying_drink ?d-drink)   ;waiter is carrying drink
     (carrying_tray ?w-waiter ?t-tray) ;waiter is carrying tray
     (at_drink_tray ?d-drink ?t-tray) ;drink is on tray
-    (at_waiter ?l-location ) ;waiter is at location
+    (at_waiter ?l-location) ;waiter is at location
     (free_waiter ?w-waiter) ;waiter is free 
-    (connected ?l1-location ?l2-location)
+    (connected ?l1-location ?l2-location) ;locations are connected
     (served ?d-drink) ;locations are connected
     (preparing ?d-drink) ;drink is being prepared
-
 )
+
 (:functions 
-    (distance ?l1-location ?l2-location) ;distance between locations
-    (distance_covered ?w - waiter) ;distance covered by waiter
-    (duration_drink ?d - drink);duration of preparing drink
+    (distance ?l1-location ?l2-location) ;distance between two locations
+    (distance_covered ?w - waiter) ;distance covered by the waiter
+    (duration_drink ?d - drink) ;duration of preparing a drink
 )
 
 (:action prepare-drink
     :parameters ( ?d - drink ?b - barista ?l - bar)
     :precondition (and (free_barista ?b) (at_barista ?l) (not (ready ?d)) (not (preparing ?d)))
-    :effect (and 
-        (not(free_barista ?b))(preparing ?d)
-    )
+    :effect (and (not(free_barista ?b))(preparing ?d))
 )
 
 (:process preparing-drink
     :parameters (?d - drink ?b - barista ?l - bar)
-    :precondition (and
-        (preparing ?d)
-        
-    )
-    
-    :effect (and
-        (decrease (duration_drink ?d) (* #t 1.0 ))
-    )
+    :precondition (and(preparing ?d))
+    :effect (and (decrease (duration_drink ?d) (* #t 1.0 )))
 )
+
 (:event ready-drink 
     :parameters (?d - drink ?b - barista ?l - bar)
     :precondition (and
@@ -71,10 +62,8 @@
         (free_barista ?b)
         (at_drink ?l ?d)
         (not (preparing ?d))
-    
     )
 )
-
 
 ; (:action pick-drink
 ;     :parameters (?w - waiter ?d - drink  ?l - bar)
