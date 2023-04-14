@@ -80,27 +80,26 @@
 (:action pick-drink
     :parameters (?w - waiter ?d - drink  ?l - bar)
     :precondition (and (at_drink ?l ?d) (free_waiter ?w)(at_waiter ?l)(ready ?d)(not(moving ?w)))
-    :effect (and (carrying_drink ?d) (not (at_drink ?l ?d)) (not (free_waiter ?w))(moving ?w)(not(at_waiter ?l)))
+    :effect (and (carrying_drink ?d) (not (at_drink ?l ?d)) (not (free_waiter ?w))(moving ?w) )
 )
 (:process MOVE-WAITER
-    :parameters (?w - waiter ?l1)
+    :parameters (?w - waiter ?l1 - location ?l2 - location)
     :precondition (and
         (moving ?w)
-    
+        (connected ?l1 ?l2)
+        
+        
         
         
     )
     :effect (and
         ;increase distance covered by waiter
-        (increase (distance_covered ?w) (* #t 1.0)) 
+        (increase (distance_covered ?w) (* #t 2.0)) 
 
-        
-
-        
     )
 )
-(:event serve-drink
-    :parameters ( ?w - waiter ?d - drink ?l1 - location ?l2 - location)
+(:event arrive-waiter
+    :parameters ( ?w - waiter ?l1 - location ?l2 - location)
     :precondition (and
         (moving ?w)
         
@@ -108,12 +107,19 @@
         (= (distance_covered ?w)(distance ?l1 ?l2))
     )
     :effect (and
-        (not (carrying_drink ?d))
+        ;(not (carrying_drink ?d))
         (not (moving ?w))
-        (free_waiter ?w)
-        (at_drink ?l2 ?d)
-        (at_waiter ?l2 )
         (assign (distance_covered ?w) 0.0)
+        (at_waiter ?l2)
+        
     )
     )
+(:action serve-drink
+    :parameters ( ?w - waiter ?d - drink ?l - table )
+    :precondition (and   (at_waiter ?l)(carrying_drink ?d)
+    (not (free_waiter ?w)) (not(moving ?w)))
+    :effect (and (not (carrying_drink ?d))  (free_waiter ?w) (at_drink ?l ?d) (moving ?w))
+)
+
+
 )
