@@ -129,7 +129,6 @@
     :precondition (and (at_waiter ?l) (free_waiter ?w) (not(cleaned ?l))(not(moving ?w))(not(cleaning ?w)))
     :effect (and  (cleaning ?w) (not (free_waiter ?w)) )
 )
-
 (:process CLEANING
     :parameters (?w - waiter )
     :precondition (and
