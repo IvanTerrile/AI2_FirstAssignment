@@ -35,7 +35,7 @@
     (preparing ?d-drink) ;drink is being prepared
     (moving ?w-waiter) ;waiter is moving
 
-    (cleaning ?w - waiter)
+    (cleaning ?w - waiter ?l - table)
     (cleaned ?l - table)
 )
 (:functions 
@@ -86,13 +86,12 @@
     :precondition (and (at_drink ?l ?d) (free_waiter ?w)(at_waiter ?l)(ready ?d)(not(moving ?w)))
     :effect (and (carrying_drink ?d) (not (at_drink ?l ?d)) (not (free_waiter ?w)));(moving ?w) )
 )
+
 (:action start-move
     :parameters (?w - waiter ?from - location ?to - location)
     :precondition (and (at_waiter ?from) (connected ?from ?to) (not(moving ?w)))
     :effect (and (moving ?w) (not (at_waiter ?from)) (at_waiter ?to))
 )
-
-
 (:process MOVE-WAITER
     :parameters (?w - waiter )
     :precondition (and
@@ -117,48 +116,40 @@
         
     )
 )
+
 (:action serve-drink
     :parameters ( ?w - waiter ?d - drink ?l - table )
-    :precondition (and   (at_waiter ?l)(carrying_drink ?d)
-    (not (free_waiter ?w)) (not(moving ?w)))
+    :precondition (and (at_waiter ?l) (carrying_drink ?d) (not (free_waiter ?w)) (not(moving ?w)))
     :effect (and (not (carrying_drink ?d))  (free_waiter ?w) (at_drink ?l ?d))
 )
 
-(:action clean-table
+(:action start-clean
     :parameters (?w - waiter ?l - table)
-    :precondition (and (at_waiter ?l) (free_waiter ?w) (not(cleaned ?l))(not(moving ?w))(not(cleaning ?w)))
-    :effect (and  (cleaning ?w) (not (free_waiter ?w)) )
+    :precondition (and (at_waiter ?l) (free_waiter ?w) (not(cleaned ?l)) (not(cleaning ?w ?l)) (not(moving ?w)))
+    :effect (and  (cleaning ?w ?l) (not (free_waiter ?w)))
 )
 (:process CLEANING
-    :parameters (?w - waiter )
+    :parameters (?w - waiter ?l - table)
     :precondition (and
-        (cleaning ?w)    
-        
+        (cleaning ?w ?l)
+        (not (moving ?w))
     )
     :effect (and
-        
-         (increase (cleaning_duration ?w) (* #t 2.0))
-
+        (increase (cleaning_duration ?w) (* #t 2.0))
     )
 )
 (:event clean-table-done
     :parameters ( ?w - waiter ?l - table)
     :precondition (and
-        (cleaning ?w)
+        (cleaning ?w ?l)
+        (not (moving ?w))
         (= (cleaning_duration ?w) (table_dimension ?l))
-        
     )
     :effect (and
-        (not (cleaning ?w))
-        (assign (cleaning_duration ?w) 0.0)
-        (free_waiter ?w)
         (cleaned ?l)
-        
+        (assign (cleaning_duration ?w) 0.0)
+        (not (cleaning ?w ?l))
+        (free_waiter ?w)
     )
 )
-
-
-
-
-
 )
