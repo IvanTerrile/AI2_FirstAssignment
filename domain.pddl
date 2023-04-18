@@ -30,20 +30,26 @@
     (at_drink_tray ?d-drink ?t-tray) ;drink is on tray
     (at_waiter ?l-location ) ;waiter is at location
     (free_waiter ?w-waiter) ;waiter is free 
-    (connected ?l1-location ?l2-location)
-    (served ?d-drink) ;locations are connected
+    (connected ?l1-location ?l2-location) ;locations are connected
     (preparing ?d-drink) ;drink is being prepared
     (moving ?w-waiter) ;waiter is moving
 
-    (cleaning ?w - waiter ?l - table)
+    (cleaning ?l - table )
     (cleaned ?l - table)
+
+    (drink_on_tray ?d - drink ?t - tray)
+    (moving_with_tray ?w - waiter ?t - tray)
+    (vaffanculo ?w - waiter)
+    (vaff ?w - waiter)
+    (tray_at_bar ?t - tray)
 )
 (:functions 
     (distance ?l1-location ?l2-location) ;distance between locations
     (distance_covered ?w - waiter) ;distance covered by waiter
     (duration_drink ?d - drink);duration of preparing drink
-    (cleaning_duration ?w - waiter)
+    (cleaning_duration ?l - table)
     (table_dimension ?l - table)
+    (tray_capacity ?t - tray)
 )
 
 (:action prepare-drink
@@ -125,31 +131,80 @@
 
 (:action start-clean
     :parameters (?w - waiter ?l - table)
-    :precondition (and (at_waiter ?l) (free_waiter ?w) (not(cleaned ?l)) (not(cleaning ?w ?l)) (not(moving ?w)))
-    :effect (and  (cleaning ?w ?l) (not (free_waiter ?w)))
+    :precondition (and (at_waiter ?l) (free_waiter ?w) (not(cleaned ?l)) (not(cleaning ?l)) (not(moving ?w)))
+    :effect (and  (cleaning ?l))
 )
 (:process CLEANING
-    :parameters (?w - waiter ?l - table)
+    :parameters (?l - table)
     :precondition (and
-        (cleaning ?w ?l)
-        (not (moving ?w))
+        (cleaning ?l )
     )
     :effect (and
-        (increase (cleaning_duration ?w) (* #t 2.0))
+        (decrease (table_dimension ?l) (* #t 2.0))
     )
 )
 (:event clean-table-done
-    :parameters ( ?w - waiter ?l - table)
+    :parameters (?l - table)
     :precondition (and
-        (cleaning ?w ?l)
-        (not (moving ?w))
-        (= (cleaning_duration ?w) (table_dimension ?l))
+        (cleaning ?l)
+        (= (table_dimension ?l) 0.0)
     )
     :effect (and
+        (assign (cleaning_duration ?l) 0.0)
+        (not (cleaning ?l))
         (cleaned ?l)
-        (assign (cleaning_duration ?w) 0.0)
-        (not (cleaning ?w ?l))
-        (free_waiter ?w)
     )
+)
+
+
+(:action load-tray
+    :parameters ( ?w - waiter ?t - tray ?d - drink ?l - bar)
+    :precondition (and  (at_drink ?l ?d) (at_waiter ?l) (at_tray ?l) (free_waiter ?w)
+                        (not(moving ?w))(<(tray_capacity ?t) 4.0) (ready ?d))
+    :effect (and (drink_on_tray ?d ?t) (not(at_drink ?l ?d)) (increase (tray_capacity ?t) 1.0))
+)
+(:action pick-tray
+    :parameters ( ?w - waiter ?t - tray ?l - bar)
+    :precondition (and  (at_tray ?l) (free_waiter ?w) (at_waiter ?l) (>(tray_capacity ?t) 1.0))
+    :effect (and (carrying_tray ?w ?t) (not (free_waiter ?w))(not (at_tray ?l )))
+)
+
+(:action start-move-tray
+    :parameters (?w - waiter ?t - tray ?from - location ?to - location )
+    :precondition (and (at_waiter ?from) (connected ?from ?to) (not (moving ?w)) (not(moving_with_tray ?w ?t)) (carrying_tray ?w ?t))  
+    :effect (and (moving_with_tray ?w ?t) (not (at_waiter ?from)) (at_waiter ?to)(at_tray ?to))
+)
+(:process MOVE-WAITER-TRAY
+    :parameters (?w - waiter ?t - tray)
+    :precondition (and (moving_with_tray ?w ?t) (not (moving ?w)) (carrying_tray ?w ?t))    
+    :effect (and
+        ;increase distance covered by waiter
+        (increase (distance_covered ?w) (* #t 1.0)))
+)
+(:event arrive-waiter-tray
+    :parameters ( ?w - waiter ?l1 - location ?l2 - location ?t - tray)
+    :precondition (and
+        (not (moving ?w))
+        (moving_with_tray ?w ?t)
+        (= (distance_covered ?w)(distance ?l1 ?l2))
+        (carrying_tray ?w ?t)
+    )
+    :effect (and
+        (not (moving_with_tray ?w ?t))
+        (assign (distance_covered ?w) 0.0)
+        (vaff ?w)
+    )
+)
+
+(:action serve-drink-tray
+    :parameters ( ?w - waiter ?d - drink ?l - table ?t - tray)
+    :precondition (and (at_waiter ?l) (at_tray ?l) (carrying_tray ?w ?t) (not (free_waiter ?w)) (not(moving ?w)) (not(moving_with_tray ?w ?t)) (drink_on_tray ?d ?t)(>(tray_capacity ?t) 0.0))
+    :effect (and (not (drink_on_tray ?d ?t)) (at_drink ?l ?d) (decrease (tray_capacity ?t) 1.0))
+)
+
+(:action unload-tray
+    :parameters ( ?w - waiter ?t - tray ?l - bar)
+    :precondition (and (at_tray ?l)(at_waiter ?l) (carrying_tray ?w ?t) (not (free_waiter ?w)) (not(moving_with_tray ?w ?t)) (=(tray_capacity ?t) 0.0))
+    :effect (and  (not (carrying_tray ?w ?t)) (free_waiter ?w) (at_tray ?l) (tray_at_bar ?t))
 )
 )
