@@ -13,7 +13,7 @@ drink7_cold - cold
 drink8_cold - cold
 
 
-bar - bar
+bar_counter - bar
 table1 - table
 table2 - table
 table3 - table
@@ -49,9 +49,9 @@ t - tray
 (free_barista r)
 (free_waiter w)
 
-(at_barista bar)
-(at_waiter bar)
-(at_tray bar)
+(at_barista bar_counter)
+(at_waiter bar_counter)
+(at_tray bar_counter)
 
 (not (cleaning table4))
 (not (cleaned table4))
@@ -59,10 +59,10 @@ t - tray
 (cleaned table1)
 (cleaned table3)
 
-(connected bar table1)
-(connected bar table2)
-(connected table2 bar)
-(connected table1 bar)
+(connected bar_counter table1)
+(connected bar_counter table2)
+(connected table2 bar_counter)
+(connected table1 bar_counter)
 (connected table1 table3)
 (connected table3 table1)
 (connected table2 table3)
@@ -76,22 +76,22 @@ t - tray
 (connected table1 table2)
 (connected table2 table1)
 
-(=(distance bar table1) 2.0)
-(=(distance bar table2) 2.0)
-(=(distance table1 bar) 2.0)
-(=(distance table2 bar) 2.0)
-(=(distance table3 table1) 1.0)
-(=(distance table2 table3) 1.0)
-(=(distance table1 table3) 1.0)
-(=(distance table3 table2) 1.0)
-(=(distance table2 table4) 1.0)
-(=(distance table4 table2) 1.0)
-(=(distance table1 table4) 1.0)
-(=(distance table4 table1) 1.0)
-(=(distance table3 table4) 1.0)
-(=(distance table4 table3) 1.0)
-(=(distance table1 table2) 1.0)
-(=(distance table2 table1) 1.0)
+(=(distance bar_counter table1) 4.0)
+(=(distance bar_counter table2) 4.0)
+(=(distance table1 bar_counter) 4.0)
+(=(distance table2 bar_counter) 4.0)
+(=(distance table3 table1) 2.0)
+(=(distance table2 table3) 2.0)
+(=(distance table1 table3) 2.0)
+(=(distance table3 table2) 2.0)
+(=(distance table2 table4) 2.0)
+(=(distance table4 table2) 2.0)
+(=(distance table1 table4) 2.0)
+(=(distance table4 table1) 2.0)
+(=(distance table3 table4) 2.0)
+(=(distance table4 table3) 2.0)
+(=(distance table1 table2) 2.0)
+(=(distance table2 table1) 2.0)
 
 (=(distance_covered w) 0.0)
 
@@ -104,10 +104,10 @@ t - tray
 (= (duration_drink drink7_cold) 3.0)
 (= (duration_drink drink8_cold) 3.0)
 
-(=(table_dimension table1) 1.0)
-(=(table_dimension table2) 1.0)
-(=(table_dimension table3) 2.0)
-(=(table_dimension table4) 1.0)
+(=(table_dimension table1) 2.0)
+(=(table_dimension table2) 2.0)
+(=(table_dimension table3) 4.0)
+(=(table_dimension table4) 2.0)
 
 (=(tray_capacity t) 0.0)
 )

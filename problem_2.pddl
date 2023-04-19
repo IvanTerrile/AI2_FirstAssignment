@@ -9,7 +9,7 @@ drink3_warm - warm
 drink4_warm - warm
 
 
-bar - bar
+bar_counter - bar
 table1 - table
 table2 - table
 table3 - table
@@ -37,9 +37,9 @@ t - tray
 (free_barista r)
 (free_waiter w)
 
-(at_barista bar)
-(at_waiter bar)
-(at_tray bar)
+(at_barista bar_counter)
+(at_waiter bar_counter)
+(at_tray bar_counter)
 
 (not(cleaning table1))
 (not (cleaned table1))
@@ -47,10 +47,10 @@ t - tray
 (cleaned table3)
 (cleaned table4)
 
-(connected bar table1)
-(connected bar table2)
-(connected table2 bar)
-(connected table1 bar)
+(connected bar_counter table1)
+(connected bar_counter table2)
+(connected table2 bar_counter)
+(connected table1 bar_counter)
 (connected table1 table3)
 (connected table3 table1)
 (connected table2 table3)
@@ -64,10 +64,10 @@ t - tray
 (connected table1 table2)
 (connected table2 table1)
 
-(=(distance bar table1) 2.0)
-(=(distance bar table2) 2.0)
-(=(distance table1 bar) 2.0)
-(=(distance table2 bar) 2.0)
+(=(distance bar_counter table1) 2.0)
+(=(distance bar_counter table2) 2.0)
+(=(distance table1 bar_counter) 2.0)
+(=(distance table2 bar_counter) 2.0)
 (=(distance table3 table1) 1.0)
 (=(distance table2 table3) 1.0)
 (=(distance table1 table3) 1.0)
