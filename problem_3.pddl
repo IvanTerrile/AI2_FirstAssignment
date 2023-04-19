@@ -82,6 +82,7 @@ t - tray
 (=(distance table2 table1) 1.0)
 
 (=(distance_covered w) 0.0)
+(=(real_distance w)0.0)
 
 (= (duration_drink drink1_warm) 5.0)
 (= (duration_drink drink2_warm) 5.0)

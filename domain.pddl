@@ -50,6 +50,7 @@
     (cleaning_duration ?l - table)
     (table_dimension ?l - table)
     (tray_capacity ?t - tray)
+    (real_distance ?w - waiter)
 )
 
 (:action prepare-drink
@@ -96,7 +97,7 @@
 (:action start-move
     :parameters (?w - waiter ?t - tray ?from - location ?to - location)
     :precondition (and (at_waiter ?from) (connected ?from ?to) (not (moving ?w)))
-    :effect (and (moving ?w) (not (at_waiter ?from)) (at_waiter ?to))
+    :effect (and (moving ?w) (not (at_waiter ?from)) (at_waiter ?to)(assign (real_distance ?w) (distance ?from ?to)))
 )
 (:process MOVE-WAITER
     :parameters (?w - waiter )
@@ -109,10 +110,10 @@
     )
 )
 (:event arrive-waiter
-    :parameters ( ?w - waiter ?l1 - location ?l2 - location)
+    :parameters ( ?w - waiter )
     :precondition (and
         (moving ?w)
-        (= (distance_covered ?w)(distance ?l1 ?l2))
+        (= (distance_covered ?w)(real_distance ?w))
     )
     :effect (and
         (not (moving ?w))
@@ -170,7 +171,7 @@
 (:action start-move-tray
     :parameters (?w - waiter ?t - tray ?from - location ?to - location)
     :precondition (and (at_waiter ?from) (connected ?from ?to) (not (moving ?w)) (not (moving_with_tray ?w ?t)) (carrying_tray ?w ?t) (at_tray ?from)) 
-    :effect (and (moving_with_tray ?w ?t) (not (at_waiter ?from)) (at_waiter ?to) (at_tray ?to) (not (at_tray ?from)))
+    :effect (and (moving_with_tray ?w ?t) (not (at_waiter ?from)) (at_waiter ?to) (at_tray ?to) (not (at_tray ?from))(assign (real_distance ?w) (distance ?from ?to)))
 )
 (:process MOVE-WAITER-TRAY
     :parameters (?w - waiter ?t - tray)
@@ -180,17 +181,17 @@
         (increase (distance_covered ?w) (* #t 1.0)))
 )
 (:event arrive-waiter-tray
-    :parameters ( ?w - waiter ?l1 - location ?l2 - location ?t - tray)
+    :parameters ( ?w - waiter ?t - tray)
     :precondition (and
         (not (moving ?w))
         (moving_with_tray ?w ?t)
-        (= (distance_covered ?w)(distance ?l1 ?l2))
+        (= (distance_covered ?w)(real_distance ?w))
         (carrying_tray ?w ?t)
     )
     :effect (and
         (not (moving_with_tray ?w ?t))
         (assign (distance_covered ?w) 0.0)
-        (vaff ?w)
+        
     )
 )
 
