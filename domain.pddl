@@ -144,9 +144,10 @@
 )
 
 (:process CLEANING
-    :parameters (?l - table)
+    :parameters (?l - table ?w - waiter)
     :precondition (and
         (cleaning ?l)
+        (not (moving ?w))
     )
     :effect (and
         (decrease (table_dimension ?l) (* #t 2.0))
@@ -154,10 +155,11 @@
 )
 
 (:event clean-table-done
-    :parameters (?l - table)
+    :parameters (?l - table ?w - waiter)
     :precondition (and
         (cleaning ?l)
         (= (table_dimension ?l) 0.0)
+        (not (moving ?w))
     )
     :effect (and
         (assign (cleaning_duration ?l) 0.0)
