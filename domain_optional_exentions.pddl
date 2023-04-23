@@ -37,6 +37,8 @@
     (cleaning ?l - table )  ;Predicate to indicate if table is being cleaned.
     (cleaned ?l - table)    ;Predicate to indicate if the table has been cleaned.
     
+    ; (at_biscuit ?l-location ?c-biscuit) ;biscuit is at location
+    ; (carrying_biscuit ?c-biscuit)  ;waiter is carring
 )
 
 (:functions 
@@ -93,6 +95,18 @@
     :precondition (and (at_waiter ?l) (carrying_drink ?d) (not (free_waiter ?w)) (not (moving ?w)))
     :effect (and (not (carrying_drink ?d)) (free_waiter ?w) (at_drink ?l ?d) (drink_served ?d))
 )
+
+; (:action pick-biscuit
+;     :parameters (?w - waiter ?c - biscuit  ?l - bar)
+;     :precondition (and (at_biscuit ?l ?c) (free_waiter ?w) (at_waiter ?l) (not (moving ?w)))
+;     :effect (and (carrying_biscuit ?c) (not (at_biscuit ?l ?c)) (not (free_waiter ?w)))
+; )
+
+; (:action serve-biscuit
+;     :parameters ( ?w - waiter ?d - drink ?l - table ?c - biscuit)
+;     :precondition (and (at_waiter ?l) (carrying_drink ?d) (not (free_waiter ?w)) (not (moving ?w)) (drink_served ?d))
+;     :effect (and (not (carrying_biscuit ?c)) (free_waiter ?w) (at_biscuit ?l ?c))
+; )
 
 (:action start-move
     :parameters (?w - waiter ?t - tray ?from - location ?to - location)
