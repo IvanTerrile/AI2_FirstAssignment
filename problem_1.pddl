@@ -1,3 +1,6 @@
+
+; Problem 1: There are 2 customers at table 2: they ordered 2 cold drinks. Tables 3 and 4 need to be cleaned. 
+
 (define(problem istance)
 
 (:domain coffe-bar)
