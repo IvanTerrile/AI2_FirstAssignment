@@ -2,7 +2,7 @@
 (define (domain coffe-bar)
  
 ;remove requirements that are not needed
-(:requirements :strips :adl :fluents :timed-initial-literals :typing :conditional-effects :negative-preconditions :duration-inequalities :equality :time)
+(:requirements :strips :adl :fluents :timed-initial-literals :typing :conditional-effects :negative-preconditions :duration-inequalities :equality :time )
  
 (:types ;todo: enumerate types and their hierarchy here, e.g. car truck bus - vehicle
     drink tray robot - object;
@@ -25,7 +25,7 @@
     
     (at_drink_tray ?d-drink ?t-tray) ;Predicate ot indicate the location of the drink on the tray.
     (drink_on_tray ?d - drink ?t - tray)    ;Predicate to indicate if the drink is on the tray.
-    (tray_at_bar ?t - tray) ;Predicate to indicate if the tray is at the bar.
+    
     (at_tray ?l-location ) ;Predicate to indicate the location of the tray.
     (carrying_tray ?w-waiter ?t-tray) ;Predicate to indicate if the waiter is carring the tray.
     (moving_with_tray ?w - waiter ?t - tray)    ;Predicate to indicate if the waiter is moving with the tray.
@@ -45,6 +45,14 @@
     (biscuit_on_tray ?c - food ?t - tray)    ;Predicate to indicate if the biscuit is on the tray.
     (biscuit_served ?c - food)  ;Predicate to indicate if the biscuit was served.
     (together ?c - food ?d - cold) ;Predicate to indicate if the drink and the biscuit are together.
+    (drinking ?d - drink)
+    (finished ?d - drink)
+    (dirty ?l - table)
+    (unvaible ?d - drink)
+    (unavailable ?d - drink)
+    (unavailable_biscuit ?c - food)
+    (start_cooling_down ?d - warm)
+    (servable ?d - drink)
 )
  
 (:functions 
@@ -59,7 +67,14 @@
  
     (real_distance ?w - waiter); Function to define the real distance traveled by the waiter.
     (distance_covered ?w - waiter); Function to define the distance covered by the waiter.
+    (finishing_drink ?d - drink)
+    (counter_client ?l - table)
+    (counter ?d - drink)
+    (duration_cool_down ?d - warm)
 )
+; (:constraints (and 
+    
+; ))
  
 (:action prepare-drink
     :parameters (?d - drink ?b - barista ?l - bar)
@@ -90,10 +105,37 @@
         (not (preparing ?d))
     )
 )
+
+; (:action start-cool-down
+;     :parameters (?d - warm)
+;     :precondition (and (ready ?d))
+;     :effect (and (start_cooling_down ?d)) 
+; )
+
+; (:process cooling-down
+;     :parameters (?d - warm)
+;     :precondition (and
+;         (start_cooling_down ?d)
+;     )
+;     :effect (and
+;         (decrease (duration_cool_down ?d) (* #t 1.0))
+;     )
+; )
+; (:event cooled-down
+;     :parameters (?d - warm)
+;     :precondition (and
+;         (start_cooling_down ?d)
+;         (= (duration_cool_down ?d) 0.0)
+;     )
+;     :effect (and
+;         (not (start_cooling_down ?d))
+;         (not(servable ?d))
+;     )
+; )
  
 (:action pick-drink
     :parameters (?w - waiter ?d - drink  ?l - bar)
-    :precondition (and (at_drink ?l ?d) (free_waiter ?w) (at_waiter ?l) (ready ?d) (not (moving ?w)))
+    :precondition (and (at_drink ?l ?d) (free_waiter ?w) (at_waiter ?l) (ready ?d) (not (moving ?w))) ;(servable ?d))
     :effect (and (carrying_drink ?d) (not (at_drink ?l ?d)) (not (free_waiter ?w)))
 )
  
@@ -114,9 +156,68 @@
     :precondition (and (together ?c ?d)(at_waiter ?l) (drink_served ?d) (carrying_biscuit ?c)(not (free_waiter ?w)) (not (moving ?w)))
     :effect (and (not (carrying_biscuit ?c)) (free_waiter ?w) (at_biscuit ?l ?c)(biscuit_served ?c))
 )
+
+(:action start-drinking-cold
+    :parameters (?d -  cold ?l - table ?c - food)
+    :precondition (and  (at_drink ?l ?d)(at_biscuit ?l ?c) (drink_served ?d) (biscuit_served ?c) (not (drinking ?d)) (not (finished ?d)) (>(counter_client ?l) 0.0)(not (unavailable_biscuit ?c)))
+    :effect (and (drinking ?d) (unavailable_biscuit ?c))
+)
+(:action start-drinking-warm
+    :parameters (?d -  warm ?l - table )
+    :precondition (and  (at_drink ?l ?d) (drink_served ?d)(not (drinking ?d)) (not (finished ?d)) (>(counter_client ?l) 0.0))
+    :effect (and (drinking ?d))
+)
+
+
+(:process drinking
+    :parameters ( ?d - drink)
+    :precondition (and
+        (drinking ?d)
+    
+    )
+    :effect (and
+        (decrease (finishing_drink ?d) (* #t 1.0 ))
+    
+    )
+)
+
+(:event finish-drink
+    :parameters ( ?d - drink  )
+    :precondition (and
+        (drinking ?d)
+        (= (finishing_drink ?d) 0.0)
+    )
+    
+    :effect (and
+        (not (drinking ?d))
+        (finished ?d)
+        
+        
+        
+        
+    
+    )
+)
+
+(:action finished-drink
+    :parameters ( ?d - drink ?l - table)
+    :precondition (and (finished ?d) (at_drink ?l ?d) (not (drinking ?d)) (>(counter_client ?l) 0.0) (not(unavailable ?d)))
+    :effect (and (decrease (counter_client ?l) 1.0)(unavailable ?d))
+)
+
+
+(:action can-clean
+    :parameters ( ?l - table  ) 
+    :precondition (and (=(counter_client ?l ) 0.0 ) )
+    :effect (and  (dirty ?l)  (not(cleaned ?l)) (not (cleaning ?l )))
+)
+
+
+
+
  
 (:action start-move
-    :parameters (?w - waiter ?t - tray ?from - location ?to - location)
+    :parameters (?w - waiter  ?from - location ?to - location)
     :precondition (and (at_waiter ?from) (connected ?from ?to) (not (moving ?w)))
     :effect (and (moving ?w) (not (at_waiter ?from)) (at_waiter ?to) (assign (real_distance ?w) (distance ?from ?to)))
 )
@@ -146,7 +247,7 @@
  
 (:action start-clean
     :parameters (?w - waiter ?l - table)
-    :precondition (and (at_waiter ?l) (free_waiter ?w) (not (cleaned ?l)) (not (cleaning ?l)) (not (moving ?w)))
+    :precondition (and (at_waiter ?l) (free_waiter ?w) (not (cleaned ?l)) (not (cleaning ?l)) (not (moving ?w)) (dirty ?l))
     :effect (and (cleaning ?l))
 )
  
@@ -258,5 +359,4 @@
 )
  
  
-Inviato da Posta per Windows
  

@@ -43,8 +43,13 @@ t - tray
 (not(cleaning table3))
 (not (cleaned table3))
 (cleaned table2)
-(cleaned table1)
-(cleaned table4)
+
+(dirty table3)
+
+(=(finishing_drink drink1_warm) 4.0)
+(=(finishing_drink drink2_warm) 4.0)
+(=(finishing_drink drink3_warm) 4.0)
+(=(finishing_drink drink4_warm) 4.0)
  
 (connected bar_counter table1)
 (connected bar_counter table2)
@@ -94,6 +99,8 @@ t - tray
 (=(table_dimension table4) 1.0)
  
 (=(tray_capacity t) 0.0)
+(=(counter_client table4) 2.0)
+(=(counter_client table1) 2.0)
 )
  
 (:goal(and
@@ -103,6 +110,8 @@ t - tray
 (at_drink table1 drink4_warm)
  
 (cleaned table3)
+(cleaned table1)
+(cleaned table4)
 ))
  
 (:metric minimize(total-time)
@@ -110,5 +119,5 @@ t - tray
 )
  
  
-Inviato da Posta per Windows
+
  

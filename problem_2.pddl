@@ -49,12 +49,19 @@ t - tray
  
 (together biscuit1 drink1_cold)
 (together biscuit2 drink2_cold)
+
+(=(finishing_drink drink1_cold) 4.0)
+(=(finishing_drink drink2_cold) 4.0)
+(=(finishing_drink drink3_warm) 4.0)
+(=(finishing_drink drink4_warm) 4.0)
+
  
 (not(cleaning table1))
 (not (cleaned table1))
 (cleaned table2)
-(cleaned table3)
 (cleaned table4)
+
+(dirty table1)
  
 (connected bar_counter table1)
 (connected bar_counter table2)
@@ -105,6 +112,8 @@ t - tray
  
 (=(tray_capacity t) 0.0)
 (=(tray_capacity_biscuit t) 0.0)
+
+(=(counter_client table3) 4.0)
 )
  
 (:goal(and
@@ -117,11 +126,12 @@ t - tray
 (at_biscuit table3 biscuit2)
  
 (cleaned table1)
+(cleaned table3)
 ))
  
 (:metric minimize(total-time)
 )
 )
  
-Inviato da Posta per Windows
+
  
