@@ -9,7 +9,7 @@
 ; We use them to restrict what objects can form the parameters of an action.
 (:types
     drink tray robot - object;
-    cold warm - drink;
+    cold warm - drink;  ???? si può levare  ????
     barista waiter - robot;
     bar table - location;
 )
@@ -18,15 +18,15 @@
 ; They are either true or false at any point in a plan and when not declared are assumed to be false.
 (:predicates 
     (ready ?d-drink)    ;Predicate to indicate if the drink is ready.
-    (preparing ?d-drink) ;Predicate to indicate if the drink is being prepared.
-    (drink_served ?d)   ;Predicate to indicate if the drink was served.
+    (preparing ?d-drink)    ;Predicate to indicate if the drink is being prepared.
+    (drink_served ?d)   ;Predicate to indicate if the drink was served.        ???? lo usiamo ????
     (carrying_drink ?d-drink) ;Predicate to indicate if the drink is being brought.
     (at_drink ?l-location ?d-drink) ;Predicate to indicate the location of the drink.
 
     (free_barista ?b-barista) ;Predicate to indicate if the barista if free.
     (at_barista ?l-location ) ;Predicate to indicate the location of the barista.
     
-    (at_drink_tray ?d-drink ?t-tray) ;Predicate ot indicate the location of the drink on the tray.
+    (at_drink_tray ?d-drink ?t-tray) ;Predicate to indicate the location of the drink on the tray.   ???? lo usiamo ????
     (drink_on_tray ?d - drink ?t - tray)    ;Predicate to indicate if the drink is on the tray.
     (tray_at_bar ?t - tray) ;Predicate to indicate if the tray is at the bar.
     (at_tray ?l-location ) ;Predicate to indicate the location of the tray.
@@ -39,22 +39,23 @@
     
     (connected ?l1-location ?l2-location) ;Predicate to indicate if the locations are connected.
 
-    (cleaning ?l - table )  ;Predicate to indicate if table is being cleaned.
-    (cleaned ?l - table)    ;Predicate to indicate if the table has been cleaned.
+    (cleaning ?l-table )  ;Predicate to indicate if table is being cleaned.
+    (cleaned ?l-table)    ;Predicate to indicate if table has been cleaned.
     
 )
 
 ; In PDDL functions are used to encode numeric state variables.
 (:functions 
-    (duration_drink ?d - drink) ; Function to define the durantion of the preparation of drink.
+    (duration_drink ?d - drink)     ;Function to define the durantion of the preparation of drink.
 
-    (distance ?l1-location ?l2-location)    ; Function to define the durantion of the preparation of drink.
-    (cleaning_duration ?l - table); Function to define the durantion of the cleaning table.
-    (table_dimension ?l - table); Function to define the dimension of table.
-    (tray_capacity ?t - tray); Function to define the capacity of the tray.
+    (cleaning_duration ?l - table)  ;Function to define the durantion of the cleaning table.
+    (table_dimension ?l - table)    ;Function to define the dimension of table.
     
-    (real_distance ?w - waiter); Function to define the real distance traveled by the waiter.
-    (distance_covered ?w - waiter); Function to define the distance covered by the waiter.
+    (tray_capacity ?t - tray)   ;Function to define the capacity of the tray.
+
+    (distance ?l1-location ?l2-location)    ;Function to define the distance between two locations.
+    (real_distance ?w - waiter)     ;Function to define the real distance traveled by the waiter.
+    (distance_covered ?w - waiter)  ;Function to define the distance covered by the waiter.
 )
 
 ; This action is activated when the barista start to prepare a new drink, it activates the process of preparation of the new drink.
@@ -95,7 +96,6 @@
     )
 )
 
-
 ; This action is activated when the waiter pick the drink at the bar to be served at the client.
 ; It requires the waiter robot to be located at the bar counter and free, the drink ready and at the bar counter;
 ; As effect the waiter is occupied and start carry the drink to a new location.
@@ -124,13 +124,13 @@
 
 ; This is the process of movement of the waiter. It requires only the input of a new movement and
 ; as effects it increase only the distance covered (by 2 units at time).
-(:process MOVE-WAITER
+(:process move-waiter
     :parameters (?w - waiter)
     :precondition (and
         (moving ?w)    
     )
     :effect (and
-        (increase (distance_covered ?w) (* #t 2.0))     ;increase distance covered by waiter
+        (increase (distance_covered ?w) (* #t 2.0))
     )
 )
 
@@ -158,7 +158,7 @@
 
 ; This is the process of cleaning of a table. It requires only the input of a new cleaning command and the condition of motionless of robot.
 ; as effects it decrease only the dimesion of the table (by 2 units at time).
-(:process CLEANING
+(:process cleaning-table
     :parameters (?l - table ?w - waiter)
     :precondition (and
         (cleaning ?l)
@@ -200,7 +200,7 @@
 ; As effect the waiter is occupied and start carry the tray to a new location.
 (:action pick-tray
     :parameters (?w - waiter ?t - tray ?l - bar)
-    :precondition (and  (at_tray ?l) (free_waiter ?w) (at_waiter ?l) (> (tray_capacity ?t) 1.0))
+    :precondition (and (at_tray ?l) (free_waiter ?w) (at_waiter ?l) (> (tray_capacity ?t) 1.0))
     :effect (and (carrying_tray ?w ?t) (not (free_waiter ?w)))
 )
 
@@ -237,13 +237,12 @@
 
 ; This is the process of movement of the waiter with the tray. It requires only the input of a new movement (with tray) and the condition
 ;  of carring tray TRUE. As effects it increase only the distance covered (by 1 at time).
-(:process MOVE-WAITER-TRAY
+(:process move-waiter-tray
     :parameters (?w - waiter ?t - tray)
     :precondition (and 
         (moving_with_tray ?w ?t) (not (moving ?w)) (carrying_tray ?w ?t)
     )    
     :effect (and
-        ;increase distance covered by waiter
         (increase (distance_covered ?w) (* #t 1.0))
     )
 )

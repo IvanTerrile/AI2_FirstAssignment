@@ -7,6 +7,7 @@
 (:domain coffe-bar)
 (:objects
 r - barista
+
 drink1_warm - warm
 drink2_warm - warm
 drink3_warm - warm
