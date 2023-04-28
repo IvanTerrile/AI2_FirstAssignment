@@ -1,36 +1,38 @@
+ 
 (define (domain coffe-bar)
-
+ 
+;remove requirements that are not needed
 (:requirements :strips :adl :fluents :timed-initial-literals :typing :conditional-effects :negative-preconditions :duration-inequalities :equality :time )
  
-(:types 
-    drink tray robot - object
-    cold warm - drink
-    biscuit - food
-    barista waiter - robot
-    bar table - location
+(:types ;todo: enumerate types and their hierarchy here, e.g. car truck bus - vehicle
+    drink tray robot - object;
+    cold warm - drink;
+    biscuit - food;
+    barista waiter - robot;
+    bar table - location;
 )
  
 (:predicates 
     (ready ?d-drink)    ;Predicate to indicate if the drink is ready.
-    (preparing ?d-drink)    ;Predicate to indicate if the drink is being prepared.
+    (preparing ?d-drink) ;Predicate to indicate if the drink is being prepared.
     (drink_served ?d)   ;Predicate to indicate if the drink was served.
-    (carrying_drink ?d-drink)   ;Predicate to indicate if the drink is being brought.
-
+    (carrying_drink ?d-drink) ;Predicate to indicate if the drink is being brought.
+    
     (at_drink ?l-location ?d-drink) ;Predicate to indicate the location of the drink.
  
-    (free_barista ?b-barista)   ;Predicate to indicate if the barista if free.
-    (at_barista ?l-location )   ;Predicate to indicate the location of the barista.
+    (free_barista ?b-barista) ;Predicate to indicate if the barista if free.
+    (at_barista ?l-location ) ;Predicate to indicate the location of the barista.
     
-    (at_drink_tray ?d-drink ?t-tray)    ;Predicate ot indicate the location of the drink on the tray.
+    (at_drink_tray ?d-drink ?t-tray) ;Predicate ot indicate the location of the drink on the tray.
     (drink_on_tray ?d - drink ?t - tray)    ;Predicate to indicate if the drink is on the tray.
     
-    (at_tray ?l-location )  ;Predicate to indicate the location of the tray.
-    (carrying_tray ?w-waiter ?t-tray)   ;Predicate to indicate if the waiter is carring the tray.
+    (at_tray ?l-location ) ;Predicate to indicate the location of the tray.
+    (carrying_tray ?w-waiter ?t-tray) ;Predicate to indicate if the waiter is carring the tray.
     (moving_with_tray ?w - waiter ?t - tray)    ;Predicate to indicate if the waiter is moving with the tray.
  
-    (at_waiter ?l-location )    ;Predicate to indicate the location of the waiter.
+    (at_waiter ?l-location ) ;Predicate to indicate the location of the waiter.
     (free_waiter ?w-waiter) ;Predicate to indicate if the waiter is free.
-    (moving ?w-waiter)  ;Predicate to indicate if waiter is moving.
+    (moving ?w-waiter) ;Predicate to indicate if waiter is moving.
     
     (connected ?l1-location ?l2-location) ;Predicate to indicate if the locations are connected.
  
@@ -43,33 +45,36 @@
     (biscuit_on_tray ?c - food ?t - tray)    ;Predicate to indicate if the biscuit is on the tray.
     (biscuit_served ?c - food)  ;Predicate to indicate if the biscuit was served.
     (together ?c - food ?d - cold) ;Predicate to indicate if the drink and the biscuit are together.
-    (drinking ?d - drink)   ;Predicate to indicate if the drink is being drunk.
-    (finished ?d - drink)   ;Predicate to indicate if the drink was finished.
-    (dirty ?l - table)  ;Predicate to indicate if the table is dirty.
-    (unvaible ?d - drink)   ;Predicate to indicate if the drink is unvaible.
-    (unavailable ?d - drink)    ;Predicate to indicate if the drink is unavailable.
-    (unavailable_biscuit ?c - food) ;Predicate to indicate if the biscuit is unavailable.
-    (start_cooling_down ?d - warm)  ;Predicate to indicate if the drink is cooling down.
-    (servable ?d - drink)   ;Predicate to indicate if the drink is servable.
+    (drinking ?d - drink)
+    (finished ?d - drink)
+    (dirty ?l - table)
+    (unvaible ?d - drink)
+    (unavailable ?d - drink)
+    (unavailable_biscuit ?c - food)
+    (start_cooling_down ?d - warm)
+    (servable ?d - drink)
 )
  
 (:functions 
-    (duration_drink ?d - drink) ;Function to define the durantion of the preparation of drink.
+    (duration_drink ?d - drink) ; Function to define the durantion of the preparation of drink.
  
-    (distance ?l1-location ?l2-location)    ;Function to define the durantion of the preparation of drink.
-    (cleaning_duration ?l - table)  ;Function to define the durantion of the cleaning table.
-    (table_dimension ?l - table)    ;Function to define the dimension of table.
-    (tray_capacity ?t - tray)   ;Function to define the capacity of the tray.
+    (distance ?l1-location ?l2-location)    ; Function to define the durantion of the preparation of drink.
+    (cleaning_duration ?l - table); Function to define the durantion of the cleaning table.
+    (table_dimension ?l - table); Function to define the dimension of table.
+    (tray_capacity ?t - tray); Function to define the capacity of the tray.
     
-    (tray_capacity_biscuit ?t-tray) ;Function to define the capacity of the tray.
+    (tray_capacity_biscuit ?t-tray); Function to define the capacity of the tray.
  
-    (real_distance ?w - waiter) ;Function to define the real distance traveled by the waiter.
-    (distance_covered ?w - waiter)  ;Function to define the distance covered by the waiter.
-    (finishing_drink ?d - drink)    ;Function to define the time to finish the drink.
-    (counter_client ?l - table) ;Function to define the number of clients at the counter.
-    (counter ?d - drink)    ;Function to define the number of drinks at the counter.
-    (duration_cool_down ?d - warm)  ;Function to define the duration of the cooling down of the drink.
+    (real_distance ?w - waiter); Function to define the real distance traveled by the waiter.
+    (distance_covered ?w - waiter); Function to define the distance covered by the waiter.
+    (finishing_drink ?d - drink)
+    (counter_client ?l - table)
+    (counter ?d - drink)
+    (duration_cool_down ?d - warm)
 )
+; (:constraints (and 
+    
+; ))
  
 (:action prepare-drink
     :parameters (?d - drink ?b - barista ?l - bar)
@@ -157,20 +162,22 @@
     :precondition (and  (at_drink ?l ?d)(at_biscuit ?l ?c) (drink_served ?d) (biscuit_served ?c) (not (drinking ?d)) (not (finished ?d)) (>(counter_client ?l) 0.0)(not (unavailable_biscuit ?c)))
     :effect (and (drinking ?d) (unavailable_biscuit ?c))
 )
-
 (:action start-drinking-warm
     :parameters (?d -  warm ?l - table )
     :precondition (and  (at_drink ?l ?d) (drink_served ?d)(not (drinking ?d)) (not (finished ?d)) (>(counter_client ?l) 0.0))
     :effect (and (drinking ?d))
 )
 
+
 (:process drinking
     :parameters ( ?d - drink)
     :precondition (and
         (drinking ?d)
+    
     )
     :effect (and
         (decrease (finishing_drink ?d) (* #t 1.0 ))
+    
     )
 )
 
@@ -184,6 +191,11 @@
     :effect (and
         (not (drinking ?d))
         (finished ?d)
+        
+        
+        
+        
+    
     )
 )
 
@@ -199,6 +211,10 @@
     :precondition (and (=(counter_client ?l ) 0.0 ) )
     :effect (and  (dirty ?l)  (not(cleaned ?l)) (not (cleaning ?l )))
 )
+
+
+
+
  
 (:action start-move
     :parameters (?w - waiter  ?from - location ?to - location)
@@ -299,6 +315,7 @@
     :effect (and (not (biscuit_on_tray ?c ?t)) (at_biscuit ?l ?c) (biscuit_served ?c) (decrease (tray_capacity_biscuit ?t) 1.0))
 )
  
+ 
 (:action unload-tray
     :parameters (?w - waiter ?t - tray ?l - bar)
     :precondition (and (at_tray ?l) (at_waiter ?l) (carrying_tray ?w ?t) (not (free_waiter ?w)) 
@@ -320,6 +337,7 @@
         (moving_with_tray ?w ?t) (not (moving ?w)) (carrying_tray ?w ?t)
     )    
     :effect (and
+        ;increase distance covered by waiter
         (increase (distance_covered ?w) (* #t 1.0))
     )
 )
