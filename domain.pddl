@@ -228,6 +228,7 @@
         (moving ?w)    
     )
     :effect (and
+        ;increase distance covered by waiter
         (increase (distance_covered ?w) (* #t 2.0)) 
     )
 )
