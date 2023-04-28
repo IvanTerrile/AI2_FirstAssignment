@@ -72,7 +72,8 @@ t - tray
 (not(finished drink1_cold))
 (not(finished drink2_cold))
 
-(=(finishing_drink) 4.0)
+(=(finishing_drink drink1_cold) 4.0)
+(=(finishing_drink drink2_cold) 4.0)
 
  
 (cleaned table1)
