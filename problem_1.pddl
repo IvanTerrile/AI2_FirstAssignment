@@ -16,7 +16,9 @@ table2 - table
 table3 - table
 table4 - table
  
-w - waiter
+w  - waiter
+w2 - waiter
+
     
 t - tray
 )
@@ -27,15 +29,30 @@ t - tray
  
 (not(preparing drink1_cold))
 (not(preparing drink2_cold))
+
+; (servable drink1_cold)
+; (servable drink2_cold)
  
 (not(moving w))
+(not(moving w2))
 (not(moving_with_tray w t))
+(not(moving_with_tray w2 t))
  
 (free_barista r)
 (free_waiter w)
+(free_waiter w2)
  
 (at_barista bar_counter)
-(at_waiter bar_counter)
+(at_waiter w bar_counter)
+(not(empty bar_counter))
+(not(empty table1))
+(empty table2)
+(empty table3)
+(empty table4)
+
+(order_of w table2)
+
+(at_waiter w2 table1)
 (at_tray bar_counter)
  
 (at_biscuit bar_counter biscuit1)
@@ -55,8 +72,8 @@ t - tray
 (not(finished drink1_cold))
 (not(finished drink2_cold))
 
-(=(finishing_drink drink1_cold) 4.0)
-(=(finishing_drink drink2_cold) 4.0)
+(=(finishing_drink) 4.0)
+
  
 (cleaned table1)
 
@@ -99,7 +116,9 @@ t - tray
 (=(distance table2 table1) 1.0)
  
 (=(distance_covered w) 0.0)
+(=(distance_covered w2)0.0)
 (=(real_distance w)0.0)
+(=(real_distance w2)0.0)
  
 (= (duration_drink drink1_cold) 3.0)
 (= (duration_drink drink2_cold) 3.0)

@@ -19,6 +19,8 @@ table3 - table
 table4 - table
  
 w - waiter
+w2 - waiter
+
     
 t - tray
 )
@@ -35,25 +37,36 @@ t - tray
 (not(preparing drink4_warm))
  
 (not(moving w))
+(not(moving w2))
 (not(moving_with_tray w t))
+(not(moving_with_tray w2 t))
  
 (free_barista r)
 (free_waiter w)
+(free_waiter w2)
  
 (at_barista bar_counter)
-(at_waiter bar_counter)
+(at_waiter w bar_counter)
+
+(at_waiter w2 table1)
 (at_tray bar_counter)
  
 (at_biscuit bar_counter biscuit1)
 (at_biscuit bar_counter biscuit2)
+
+(not(empty bar_counter))
+(not(empty table1))
+(empty table2)
+(empty table3)
+(empty table4)
+
+(order_of w table3)
  
 (together biscuit1 drink1_cold)
 (together biscuit2 drink2_cold)
 
-(=(finishing_drink drink1_cold) 4.0)
-(=(finishing_drink drink2_cold) 4.0)
-(=(finishing_drink drink3_warm) 4.0)
-(=(finishing_drink drink4_warm) 4.0)
+
+
 
  
 (not(cleaning table1))
@@ -62,7 +75,10 @@ t - tray
 (cleaned table4)
 
 (dirty table1)
- 
+
+
+
+
 (connected bar_counter table1)
 (connected bar_counter table2)
 (connected table2 bar_counter)
@@ -98,7 +114,9 @@ t - tray
 (=(distance table2 table1) 1.0)
  
 (=(distance_covered w) 0.0)
+(=(distance_covered w2) 0.0)
 (=(real_distance w)0.0)
+(=(real_distance w2)0.0)
  
 (= (duration_drink drink1_cold) 3.0)
 (= (duration_drink drink2_cold) 3.0)
@@ -114,8 +132,14 @@ t - tray
 (=(tray_capacity_biscuit t) 0.0)
 
 (=(counter_client table3) 4.0)
+
+(=(finishing_drink drink1_cold ) 4.0)
+(=(finishing_drink drink2_cold ) 4.0)
+(=(finishing_drink drink3_warm ) 4.0)
+(=(finishing_drink drink4_warm ) 4.0)
+
+
 )
- 
 (:goal(and
 (at_drink table3 drink1_cold)
 (at_drink table3 drink2_cold)
@@ -129,7 +153,9 @@ t - tray
 (cleaned table3)
 ))
  
-(:metric minimize(total-time)
+(:metric minimize(total-time) 
+
+
 )
 )
  
