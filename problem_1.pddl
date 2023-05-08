@@ -21,26 +21,14 @@
     )
 
     (:init
-        (not(ready drink1_cold))
-        (not(ready drink2_cold))
-
-        (not(preparing drink1_cold))
-        (not(preparing drink2_cold))
-
-        (not(moving waiter))
-        (not(moving_with_tray waiter tray))
 
         (free_barista barista)
         (free_waiter waiter)
-
+        
         (at_barista bar_counter)
         (at_waiter bar_counter)
         (at_tray bar_counter)
 
-        (not(cleaning table3))
-        (not(cleaning table4))
-        (not(cleaned table3))
-        (not(cleaned table4))
         (cleaned table1)
         (cleaned table2)
 

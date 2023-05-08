@@ -39,13 +39,13 @@
         (cleaning ?l-table )  ;Predicate to indicate if table is being cleaned.
         (cleaned ?l-table)    ;Predicate to indicate if table has been cleaned.
         
-    )
+        (cleaning_waiter ?w - waiter)
+)
 
     ; In PDDL functions are used to encode numeric state variables.
     (:functions 
         (duration_drink ?d - drink)     ;Function to define the durantion of the preparation of drink.
 
-        (cleaning_duration ?l - table)  ;Function to define the durantion of the cleaning table.
         (table_dimension ?l - table)    ;Function to define the dimension of table.
         
         (tray_capacity ?t - tray)   ;Function to define the capacity of the tray.
@@ -114,8 +114,8 @@
     ; It requires the waiter robot to be free and not just moving and the future location is connected with the attual one.
     ; As effect the robot start moving and the distance value is assigned in a variable called "real_distance".
     (:action start-move
-        :parameters (?w - waiter ?t - tray ?from - location ?to - location)
-        :precondition (and (at_waiter ?from) (connected ?from ?to) (not (moving ?w)))
+        :parameters (?w - waiter ?from - location ?to - location)
+        :precondition (and (at_waiter ?from) (connected ?from ?to) (not (moving ?w))(not(cleaning_waiter ?w)))
         :effect (and (moving ?w) (not (at_waiter ?from)) (at_waiter ?to) (assign (real_distance ?w) (distance ?from ?to)))
     )
 
@@ -149,8 +149,8 @@
     ; It requires that the waiter robot must be free and it not moving or just cleaning an other table. As effect the robot start clining.
     (:action start-clean
         :parameters (?w - waiter ?l - table)
-        :precondition (and (at_waiter ?l) (free_waiter ?w) (not (cleaned ?l)) (not (cleaning ?l)) (not (moving ?w)))
-        :effect (and (cleaning ?l))
+        :precondition (and (at_waiter ?l) (free_waiter ?w) (not (cleaned ?l)) (not (cleaning ?l))(not(cleaning_waiter ?w)) (not (moving ?w)))
+        :effect (and (cleaning ?l)(cleaning_waiter ?w))
     )
 
     ; This is the process of cleaning of a table. It requires only the input of a new cleaning command and the condition of motionless of robot.
@@ -159,6 +159,7 @@
         :parameters (?l - table ?w - waiter)
         :precondition (and
             (cleaning ?l)
+            (cleaning_waiter ?w)
             (not (moving ?w))
         )
         :effect (and
@@ -172,12 +173,13 @@
         :parameters (?l - table ?w - waiter)
         :precondition (and
             (cleaning ?l)
+            (cleaning_waiter ?w)
             (= (table_dimension ?l) 0.0)
             (not (moving ?w))
         )
         :effect (and
-            (assign (cleaning_duration ?l) 0.0)
             (not (cleaning ?l))
+            (not (cleaning_waiter ?w))
             (cleaned ?l)
         )
     )
@@ -227,7 +229,7 @@
     (:action start-move-tray
         :parameters (?w - waiter ?t - tray ?from - location ?to - location)
         :precondition (and (at_waiter ?from) (connected ?from ?to) (not (moving ?w)) (not (moving_with_tray ?w ?t))
-                        (carrying_tray ?w ?t) (at_tray ?from)) 
+                        (carrying_tray ?w ?t) (at_tray ?from)(not(cleaning_waiter ?w))) 
         :effect (and (moving_with_tray ?w ?t) (not (at_waiter ?from)) (at_waiter ?to) (at_tray ?to) (not (at_tray ?from))
                     (assign (real_distance ?w) (distance ?from ?to)))
     )
