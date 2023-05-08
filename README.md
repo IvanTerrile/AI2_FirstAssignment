@@ -47,22 +47,22 @@ java -jar enhsp-20.jar -o domain_basic.pddl -f problem_4_basic.pddl --delta_exec
 
 #### Problem 1 (optional extension)
 ```
-java -jar enhsp-20.jar -o domain_basic.pddl -f problem_1.pddl --delta_execuction 0.5 -planner opt-blind
+java -jar enhsp-20.jar -o domain_optional.pddl -f problem_1_optional.pddl --delta_execuction 0.5 -planner opt-hrmax
 ```
 
 #### Problem 2 (optional extension)
 ```
-java -jar enhsp-20.jar -o domain_basic.pddl -f problem_2.pddl --delta_execuction 0.5 -planner opt-hrmax
+java -jar enhsp-20.jar -o domain_optional.pddl -f problem_2_optional.pddl --delta_execuction 0.5 -planner sat-hadd
 ```
 
 #### Problem 3 (optional extension)
 ```
-java -jar enhsp-20.jar -o domain_basic.pddl -f problem_3.pddl --delta_execuction 0.5 -planner opt-hrmax
+java -jar enhsp-20.jar -o domain_optional.pddl -f problem_3_optional.pddl --delta_execuction 0.5 -planner sat-aibr
 ```
 
 #### Problem 4 (optional extension)
 ```
-java -jar enhsp-20.jar -o domain_basic.pddl -f problem_4.pddl --delta_execuction 0.5 -planner sat-aibr
+java -jar enhsp-20.jar -o domain_optional.pddl -f problem_4_optional.pddl --delta_execuction 0.5 -planner sat-hadd
 ```
 ------------------------------------
 ## Authors
