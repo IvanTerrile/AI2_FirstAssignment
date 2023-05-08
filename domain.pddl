@@ -17,12 +17,11 @@
         (ready ?d-drink)    ;Predicate to indicate if the drink is ready.
         (preparing ?d-drink)    ;Predicate to indicate if the drink is being prepared.
         (drink_served ?d)   ;Predicate to indicate if the drink was served.
-        (servable ?d - drink)
         (drinking ?d - drink)   ;Predicate to indicate if the customer is drinking.
         (finished ?d - drink)   ;Predicate to indicate whether the customer is finished drinking.
-        (unvaible ?d - drink)
+        
         (unavailable ?d - drink)
-        (start_cooling_down ?d - warm)
+        
         (carrying_drink ?w - waiter ?d-drink) ;Predicate to indicate if the drink is being brought.
         (order_of ?w - waiter ?l - table) ;Predicate to indicate if the waiter is taking the order.
         (at_drink ?l-location ?d-drink) ;Predicate to indicate the location of the drink.
@@ -60,7 +59,6 @@
         (duration_drink ?d - drink) ;Function to define the durantion of the preparation of drink.
     
         (distance ?l1-location ?l2-location)    ;Function to define the durantion of the preparation of drink.
-        (cleaning_duration ?l - table)  ;Function to define the durantion of the cleaning table.
         (table_dimension ?l - table)    ;Function to define the dimension of table.
         (tray_capacity ?t - tray)   ;Function to define the capacity of the tray.
         
@@ -70,8 +68,8 @@
         (distance_covered ?w - waiter); Function to define the distance covered by the waiter.
         (finishing_drink ?d - drink); Function to define the time to finish the drink.
         (counter_client ?l - table)      ; Function to indicate the time that the customer takes to drink.
-        (counter ?d - drink)    ; Function to indicate the time that the customer takes to drink.
-        (duration_cool_down ?d - warm)  ; Function to indicate the time that the drink takes to cool down.
+        
+        
     )
 
     ; This action is activated when the barista start to prepare a new drink, it activates the process of preparation of the new drink.
@@ -112,37 +110,7 @@
         )
         
     )
-
-    ; (:action start-cool-down
-    ;     :parameters (?d - warm ?l - bar ?w - waiter) 
-    ;     :precondition (and  (ready ?d) (at_drink ?l ?d) (not (drink_served ?d))(not (carrying_drink ?w ?d)))
-    ;     :effect
-        
-    ;     (and (start_cooling_down ?d) )
-    ; )
-
-
-    ; (:process cooling-down
-    ;     :parameters (?d - warm)
-    ;     :precondition (and
-    ;         (start_cooling_down ?d)
-    ;     )
-    ;     :effect (and
-    ;         (decrease (duration_cool_down ?d) (* #t 1.0))
-    ;     )
-    ; )
-    ; (:event cooled-down
-    ;     :parameters (?d - warm)
-    ;     :precondition (and
-    ;         (start_cooling_down ?d)
-    ;         (= (duration_cool_down ?d) 0.0)
-    ;     )
-    ;     :effect (and
-    ;         (not (start_cooling_down ?d))
-    ;         (not(servable ?d))
-    ;     )
-    ; )
-
+    
     ; This action is activated when the waiter pick the drink at the bar to be served at the client.
     ; It requires the waiter robot to be located at the bar counter and free, the drink ready and at the bar counter;
     ; As effect the waiter is occupied and start carry the drink to a new location. 
@@ -302,7 +270,6 @@
             (not (moving ?w))
         )
         :effect (and
-            (assign (cleaning_duration ?l) 0.0)
             (not (cleaning ?l))
             (not (cleaning_waiter ?w))
             (cleaned ?l)

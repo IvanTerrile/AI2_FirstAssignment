@@ -26,20 +26,7 @@
     )
     
     (:init
-        (not(ready drink1_cold))
-        (not(ready drink2_cold))
-        (not(ready drink3_warm))
-        (not(ready drink4_warm))
         
-        (not(preparing drink1_cold))
-        (not(preparing drink2_cold))
-        (not(preparing drink3_warm))
-        (not(preparing drink4_warm))
-        
-        (not(moving w))
-        (not(moving w2))
-        (not(moving_with_tray w t))
-        (not(moving_with_tray w2 t))
         
         (free_barista r)
         (free_waiter w)
@@ -54,8 +41,7 @@
         (at_biscuit bar_counter biscuit1)
         (at_biscuit bar_counter biscuit2)
 
-        (not(empty bar_counter))
-        (not(empty table1))
+    
         (empty table2)
         (empty table3)
         (empty table4)
@@ -65,8 +51,7 @@
         (together biscuit1 drink1_cold)
         (together biscuit2 drink2_cold)
         
-        (not(cleaning table1))
-        (not (cleaned table1))
+        
         (cleaned table2)
         (cleaned table4)
 

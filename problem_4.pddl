@@ -30,28 +30,7 @@
     )
     
     (:init
-        (not(ready drink1_warm))
-        (not(ready drink2_warm))
-        (not(ready drink3_warm))
-        (not(ready drink4_warm))
-        (not(ready drink5_cold))
-        (not(ready drink6_cold))
-        (not(ready drink7_cold))
-        (not(ready drink8_cold))
         
-        (not(preparing drink1_warm))
-        (not(preparing drink2_warm))         
-        (not(preparing drink3_warm))
-        (not(preparing drink4_warm))
-        (not(preparing drink5_cold))
-        (not(preparing drink6_cold))
-        (not(preparing drink7_cold))
-        (not(preparing drink8_cold))
-        
-        (not(moving w))
-        (not(moving w2))
-        (not(moving_with_tray w t))
-        (not(moving_with_tray w2 t))
         
         (free_barista r)
         (free_waiter w)
@@ -63,8 +42,6 @@
         (at_waiter w2 table1)
         (at_tray bar_counter)
 
-        (not(empty bar_counter))
-        (not(empty table1))
         (empty table2)
         (empty table3)
         (empty table4)
