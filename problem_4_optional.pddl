@@ -2,7 +2,7 @@
  
     (:domain coffe-bar)
     (:objects
-        r - barista
+        barista - barista
         drink1_warm - warm
         drink2_warm - warm
         drink3_warm - warm
@@ -23,32 +23,29 @@
         table3 - table
         table4 - table
         
-        w - waiter
-        w2 - waiter
+        waiter1 - waiter
+        waiter2 - waiter
             
-        t - tray
+        tray - tray
     )
     
     (:init
-        
-        
-        (free_barista r)
-        (free_waiter w)
-        (free_waiter w2)
+        (free_barista barista)
+        (free_waiter waiter1)
+        (free_waiter waiter2)
         
         (at_barista bar_counter)
-        (at_waiter w bar_counter)
-
-        (at_waiter w2 table1)
+        (at_waiter waiter1 bar_counter)
+        (at_waiter waiter2 table1)
         (at_tray bar_counter)
 
         (empty table2)
         (empty table3)
         (empty table4)
 
-        (order_of w2 table1)
-        (order_of w2 table4)
-        (order_of w table3)
+        (order_of waiter2 table1)
+        (order_of waiter2 table4)
+        (order_of waiter1 table3)
         
         (at_biscuit bar_counter biscuit1)
         (at_biscuit bar_counter biscuit2)
@@ -105,10 +102,10 @@
         (=(distance table1 table2) 1.0)
         (=(distance table2 table1) 1.0)
         
-        (=(distance_covered w) 0.0)
-        (=(distance_covered w2) 0.0)
-        (=(real_distance w)0.0)
-        (=(real_distance w2)0.0)
+        (=(distance_covered waiter1) 0.0)
+        (=(distance_covered waiter2) 0.0)
+        (=(real_distance waiter1)0.0)
+        (=(real_distance waiter2)0.0)
         
         (= (duration_drink drink1_warm) 5.0)
         (= (duration_drink drink2_warm) 5.0)
@@ -124,8 +121,8 @@
         (=(table_dimension table3) 2.0)
         (=(table_dimension table4) 1.0)
         
-        (=(tray_capacity t) 0.0)
-        (=(tray_capacity_biscuit t) 0.0)
+        (=(tray_capacity tray) 0.0)
+        (=(tray_capacity_biscuit tray) 0.0)
         (=(counter_client table3) 1.0)
         (=(counter_client table4) 2.0)
         (=(counter_client table1) 2.0)
