@@ -72,17 +72,15 @@
         
     )
 
-    ; This action is activated when the barista start to prepare a new drink, it activates the process of preparation of the new drink.
-    ; It requires the barista robot to be located at the bar counter, and not busy; as effect it tells that the robot is start preparing the 
-    ; drink. 
+    ;This action specifies the process of the barista robot preparing a drink at the bar counter
     (:action prepare-drink
         :parameters (?d - drink ?b - barista ?l - bar)
         :precondition (and (free_barista ?b) (at_barista ?l) (not (ready ?d)) (not (preparing ?d)))
         :effect (and (not (free_barista ?b)) (preparing ?d))
     )
 
-    ; This process used to preparing the drink. It requires only the input of a new order and as effects it decrease only 
-    ; the preparation time (by 1 unit at time). 
+    ;This process represents a drink that is being prepared 
+    ;and is activated by the action: (:action prepare-drink)
     (:process preparing-drink
         :parameters (?d - drink)
         :precondition (and
@@ -93,9 +91,8 @@
         )
     )
 
-    ; This event is activated every time that the barista has finish the preparation of the drink. It requires that the decreasing preparation
-    ; time is equal to zero. As effect it tells that the drink is at the bar counter and ready, also that the barista is free and ready 
-    ; for a new order. 
+    ;This event signifies the completion of preparation of a particular drink by the barista robot 
+    ;and is activated by a process: (:process preparing-drink).
     (:event ready-drink 
         :parameters (?d - drink ?b - barista ?l - bar)
         :precondition (and
@@ -111,42 +108,37 @@
         
     )
     
-    ; This action is activated when the waiter pick the drink at the bar to be served at the client.
-    ; It requires the waiter robot to be located at the bar counter and free, the drink ready and at the bar counter;
-    ; As effect the waiter is occupied and start carry the drink to a new location. 
+    ;This action specifies the process of a waiter picking up a ready drink at the bar counter 
+    ;to deliver to a specified table.
     (:action pick-drink
         :parameters (?w - waiter ?d - drink  ?l - bar)
         :precondition (and (at_drink ?l ?d) (free_waiter ?w) (at_waiter ?w ?l) (ready ?d) (not (moving ?w)))
         :effect (and (carrying_drink ?w ?d) (not (at_drink ?l ?d)) (not (free_waiter ?w)))
     )
 
-    ; This action is activated when the waiter served the drink at the client sit in a table. It requires the waiter robot to be located
-    ; at the client table with the drink in one gripper; As effect the waiter serve the drink to the client. 
+    ;This action specifies the process of a waiter serving a drink to a customer at a table
     (:action serve-drink
         :parameters (?w - waiter ?d - drink ?l - table)
         :precondition (and (at_waiter ?w ?l) (carrying_drink ?w ?d) (order_of ?w ?l) (not (free_waiter ?w)) (not (moving ?w)))
         :effect (and (not (carrying_drink ?w ?d)) (free_waiter ?w) (at_drink ?l ?d) (drink_served ?d))
     )
 
-    ; This action is activated when the waiter pick the biscuit at the bar to be served at the client.
-    ; It requires the waiter robot to be located at the bar counter and free. The drink already served at the client;
-    ; As effect the waiter is occupied and start carry the biscuit to a new location. 
+    ;This action specifies the process of a waiter picking up a biscuit at the bar counter 
+    ;to deliver to a specified table.
     (:action pick-biscuit
         :parameters (?w - waiter ?c - food ?d - cold ?l - bar)
         :precondition (and (together ?c ?d) (drink_served ?d) (at_biscuit ?l ?c) (free_waiter ?w) (at_waiter ?w ?l) (not (moving ?w)))
         :effect (and (carrying_biscuit ?w ?c) (not (at_biscuit ?l ?c)) (not (free_waiter ?w)))
     )
 
-    ; This action is activated when the waiter served the biscuit at the client sit in a table. It requires the waiter robot to be located
-    ; at the client table with the biscuit in one gripper. The drink must be already served. As effect the waiter serve the drink to the client.  
+    ;This action specifies the process of a waiter serving a biscuit to a customer at a table
     (:action serve-biscuit
         :parameters (?w - waiter ?l - table ?d - cold ?c - food)
         :precondition (and (together ?c ?d) (at_waiter ?w ?l) (drink_served ?d) (order_of ?w ?l) (carrying_biscuit ?w ?c) (not (free_waiter ?w)) (not (moving ?w)))
         :effect (and (not (carrying_biscuit ?w ?c)) (free_waiter ?w) (at_biscuit ?l ?c) (biscuit_served ?c))
     )
 
-    ; This action is activated when the client start drink a cold drink. It requires that the drink is at the client table and the client not drinking it.
-    ; The biscuit is already been served. As effect the client start drinking the drink and eat the biscuit.
+    ;This action specifies the process of a customer starting a cold drink.
     (:action start-drinking-cold
         :parameters (?d -  cold ?l - table ?c - food)
         :precondition (and (at_drink ?l ?d) (at_biscuit ?l ?c) (drink_served ?d) (biscuit_served ?c) (not (drinking ?d)) (not (finished ?d))
@@ -154,16 +146,15 @@
         :effect (and (drinking ?d) (unavailable_biscuit ?c))
     )
 
-    ; This action is activated when the client start drink a warm drink. It requires that the drink is at the client table and the client not drinking it.
-    ; As effect the client start drinking the drink.
+    ;This action specifies the process of a customer starting a warm drink.
     (:action start-drinking-warm
         :parameters (?d -  warm ?l - table)
         :precondition (and (at_drink ?l ?d) (drink_served ?d) (not (drinking ?d)) (not (finished ?d)) (> (counter_client ?l) 0.0))
         :effect (and (drinking ?d))
     )
 
-    ; This is the precess of drinking. It requires only that the client is drinking.
-    ; As effects it decrease only the function to indicate the time to finish the drink. (by 1 units at time). 
+    ;This process models the action of a client drinking a drink and is activated 
+    ;by the action: (:action start-drinking-cold) or (:action start-drinking-warm), depending on the type of the drinks 
     (:process drinking
         :parameters (?d - drink)
         :precondition (and
@@ -174,8 +165,8 @@
         )
     )
 
-    ; This event is activated every time that the customer has finished drinking his drink. It requires that the customer is having the drink,
-    ; and the variable finishing drink is equal to zero. As a result the customer has finished drinking the drink. 
+    ;This event specifies a finish-drink event, which is triggered when a person finishes drinking 
+    ;a specific drink and is activated by a process: (:process drinking). 
     (:event finish-drink
         :parameters (?d - drink)
         :precondition (and
@@ -188,31 +179,29 @@
         )
     )
 
+    ;This action represents the process of finishing drinks
     (:action finished-drink
         :parameters (?d - drink ?l - table)
         :precondition (and (finished ?d) (at_drink ?l ?d) (not (drinking ?d)) (> (counter_client ?l) 0.0) (not (unavailable ?d)))
         :effect (and (decrease (counter_client ?l) 1.0) (unavailable ?d))
     )
 
-    ; This action is activated when there are no more customers sitting at the table. It requires that the counter client is equal to zero, and
-    ; the table is not alreay clean. as effect we initialize the predicate dirty to TRUE.
+    ;The action specifies that a table can be cleaned if it has no clients and has not been cleaned yet. 
     (:action can-clean
         :parameters (?l - table) 
         :precondition (and (= (counter_client ?l) 0.0) (not (cleaned ?l)))
         :effect (and (dirty ?l))
     )
 
-    ; This action is activated when the waiter start moving and it activates the process of movement to a new location.
-    ; It requires the waiter robot to be free and not just moving and the future location is connected with the attual one.
-    ; As effect the robot start moving and the distance value is assigned in a variable called "real_distance". 
+    ;This action specifies the process of a waiter starting to move from one location to another
     (:action start-move
         :parameters (?w - waiter  ?from - location ?to - location)
         :precondition (and (at_waiter ?w ?from) (connected ?from ?to) (not (moving ?w)) (not (cleaning_waiter ?w)) (not(empty ?from)) (empty ?to))
         :effect (and (moving ?w) (not (at_waiter ?w ?from)) (at_waiter ?w ?to) (assign (real_distance ?w) (distance ?from ?to)) (not (empty ?to)) (empty ?from))
     )
 
-    ; This is the process of movement of the waiter. It requires only the input of a new movement and
-    ; as effects it increase only the distance covered (by 2 units at time). 
+    ;This process models the action of a waiter robot moving from one location 
+    ;to another in the environment and is activated by the action: (:action start-move).
     (:process move-waiter
         :parameters (?w - waiter)
         :precondition (and
@@ -223,8 +212,8 @@
         )
     )
 
-    ; This event is activated every time that the waiter arrive at the desired location. It requires that the distance covererd is equal
-    ; to "real_distance". As effect the waiter stop moving and the distance covered is reinitialized to 0. 
+    ;This event represents the arrival of the waiter robot to a destination location, 
+    ;such as a table or the bar counter, location and is activated by a process: (:process move-waiter). 
     (:event arrive-waiter
         :parameters (?w - waiter)
         :precondition (and
@@ -237,16 +226,15 @@
         )
     )
 
-    ; This action is activated when the waiter start cleaning a new table and it activates the cleaning process.
-    ; It requires that the waiter robot must be free and it not moving or just cleaning an other table. As effect the robot start clining. 
+    ;This action specifies the process of a waiter starting to clean a table.
     (:action start-clean
         :parameters (?w - waiter ?l - table)
         :precondition (and (at_waiter ?w ?l) (free_waiter ?w) (not (cleaned ?l)) (not (cleaning ?l)) (not (moving ?w)) (dirty ?l))
         :effect (and (cleaning ?l) (cleaning_waiter ?w))
     )
 
-    ; This is the process of cleaning of a table. It requires only the input of a new cleaning command and the condition of motionless of robot.
-    ; as effects it decrease only the dimesion of the table (by 2 units at time). 
+    ;This process is used to clean the tables that are dirty 
+    ;and is activated by the action: (:action start-clean).
     (:process cleaning-table
         :parameters (?l - table ?w - waiter)
         :precondition (and
@@ -259,8 +247,8 @@
         )
     )
 
-    ; This event is activated every time that the waiter finished cleanign a table . It requires that the dimension of the table is equal
-    ; to 0. As effect the waiter stop cleaning and assign "cleaning  duration" to 0. The predicate "cleaned" is TRUE. 
+    ;This event represents the completion of the cleaning process of a table 
+    ;and is activated by a process: (:process cleaning-table). 
     (:event clean-table-done
         :parameters (?l - table ?w - waiter)
         :precondition (and
@@ -276,10 +264,7 @@
         )
     )
 
-    ; This action is activated when the waiter start loading the tray with biscuits ready at the bar.
-    ; It requires that the waiter robot must be free and it not moving, the tray is at the bar counter and with 3 or less biscuits on it.
-    ; There must be no drinks on the tray.
-    ; As effect the robot start loading the biscuit on the tray and increasing the tray capacity of biscuits (by 1 unit at time).
+    ;This action represents the waiter robot loading a tray with a drink.
     (:action load-tray-biscuit
         :parameters (?w - waiter ?t - tray ?d - cold ?c - food ?l - bar)
         :precondition (and (together ?c ?d) (at_biscuit ?l ?c) (at_waiter ?w ?l) (at_tray ?l) (free_waiter ?w)
@@ -287,10 +272,7 @@
         :effect (and (biscuit_on_tray ?c ?t) (not (at_biscuit ?l ?c)) (increase (tray_capacity_biscuit ?t) 1.0))
     )
 
-    ; This action is activated when the waiter start loading the tray with drinks ready at the bar.
-    ; It requires that the waiter robot must be free and it not moving, the tray is at the bar counter and with 3 or less drinks on it.
-    ; There must be no biscuits on the tray.
-    ; As effect the robot start loading the drink on the tray and increasing the tray capacity (by 1 unit at time).
+    ;This action specifies a process for a waiter to load a tray with a biscuit.
     (:action load-tray-drink
         :parameters (?w - waiter ?t - tray ?d - drink  ?c - food ?l - bar)
         :precondition (and (at_drink ?l ?d) (at_waiter ?w ?l) (at_tray ?l) (free_waiter ?w)
@@ -298,27 +280,22 @@
         :effect (and (drink_on_tray ?d ?t) (not (at_drink ?l ?d)) (increase (tray_capacity ?t) 1.0))
     )
 
-    ; This action is activated when the waiter pick the tray at the bar counter for serving drinks.
-    ; It requires the waiter robot to be located at the bar counter and free, and the capacity (nunber of drinks on the tray) is greater than 1.
-    ; As effect the waiter is occupied and start carry the tray to a new location. 
+    ;This action represents the action of the waiter robot picking up a tray of drinks from a bar. 
     (:action pick-tray-drink
         :parameters (?w - waiter ?t - tray  ?l - bar)
         :precondition (and (at_tray ?l) (free_waiter ?w) (at_waiter ?w ?l) (> (tray_capacity ?t) 1.0))
         :effect (and (carrying_tray ?w ?t) (not (free_waiter ?w)))
     )
 
-    ; This action is activated when the waiter pick the tray at the bar counter for serving biscuits.
-    ; It requires the waiter robot to be located at the bar counter and free, and the capacity (nunber of biscuits on the tray) is greater than 1.
-    ; As effect the waiter is occupied and start carry the tray to a new location. 
+    ;This action specifies that a waiter can pick up a tray that has at least 
+    ;one biscuit on it, in order to serve it to a client. 
     (:action pick-tray-biscuit
         :parameters (?w - waiter ?t - tray  ?l - bar)
         :precondition (and (at_tray ?l) (free_waiter ?w) (at_waiter ?w ?l) (> (tray_capacity_biscuit ?t) 1.0))
         :effect (and (carrying_tray ?w ?t) (not (free_waiter ?w)))
     )
 
-    ; This action is activated when the waiter served the drinks with the tray at the clients sit in tables. 
-    ; It requires the waiter robot to be located at the client table with the tray in one gripper;
-    ; As effect the waiter serve the drink to the client and the tray capacity decreasing (by 1 unit at time). 
+    ;This action describes the process of a waiter serving a drink from a tray to a customer’s table.
     (:action serve-drink-tray
         :parameters (?w - waiter ?d - drink  ?l - table ?t - tray)
         :precondition (and (at_waiter ?w ?l) (at_tray ?l) (carrying_tray ?w ?t) (order_of ?w ?l) (not (free_waiter ?w)) 
@@ -326,9 +303,7 @@
         :effect (and (not (drink_on_tray ?d ?t)) (at_drink ?l ?d) (drink_served ?d) (decrease (tray_capacity ?t) 1.0))
     )
 
-    ; This action is activated when the waiter served the biscuits with the tray at the clients sit in tables. 
-    ; It requires the waiter robot to be located at the client table with the tray in one gripper. Before serving the drink there must be
-    ; a cold drink already served; As effect the waiter serve the BISCUIT to the client and the tray capacity decreasing (by 1 unit at time).  
+    ;This action specifies the parameters and effects of serving a biscuit from a tray to a table.
     (:action serve-biscuit-tray
         :parameters (?w - waiter ?c - food ?d - cold ?l - table ?t - tray)
         :precondition (and (together ?c ?d) (drink_served ?d) (at_waiter ?w ?l) (at_tray ?l) (order_of ?w ?l) (carrying_tray ?w ?t) (not (free_waiter ?w)) 
@@ -336,9 +311,7 @@
         :effect (and (not (biscuit_on_tray ?c ?t)) (at_biscuit ?l ?c) (biscuit_served ?c) (decrease (tray_capacity_biscuit ?t) 1.0))
     )
 
-    ; This action is activated when the waiter put the tray on the bar counter after having served the drink.
-    ; It requires the waiter robot being at the bar counter with the tray in one gripper. The capacity of the tray must be 0.
-    ; As effect the robot stop carring the tray and put it on the bar counter, the waiter is now free for new actions. 
+    ;This action represents the action of the waiter robot unloading a tray that he is carrying
     (:action unload-tray
         :parameters (?w - waiter ?t - tray ?l - bar)
         :precondition (and (at_tray ?l) (at_waiter ?w ?l) (carrying_tray ?w ?t) (not (free_waiter ?w)) 
@@ -346,9 +319,7 @@
         :effect (and (not (carrying_tray ?w ?t)) (free_waiter ?w) (at_tray ?l))
     )
 
-    ; This action is activated when the waiter start moving with the tray and it activates the process of movement to a new location.
-    ; It requires the waiter robot to be free and not just moving, the condition of carring the tray si THRE and the future location is 
-    ; connected with the attual one. As effect the robot start moving and the distance value is assigned in a variable called "real_distance". 
+    ;This action describes a waiter starting to move with a tray from one location to another.  
     (:action start-move-tray
         :parameters (?w - waiter ?t - tray ?from - location ?to - location)
         :precondition (and (at_waiter ?w ?from) (connected ?from ?to) (not (moving ?w)) (not (moving_with_tray ?w ?t)) (not(empty ?from)) (empty ?to)
@@ -357,8 +328,8 @@
                     (assign (real_distance ?w) (distance ?from ?to)) (not (empty ?to)) (empty ?from))
     )
 
-    ; This is the process of movement of the waiter with the tray. It requires only the input of a new movement (with tray) and the condition
-    ; of carring tray TRUE. As effects it increase only the distance covered (by 1 at time). 
+    ;This process represents the action of the waiter robot moving from one location to another 
+    ;while carrying a tray and is activated by an action: (:action start-move-tray).
     (:process move-waiter-tray
         :parameters (?w - waiter ?t - tray)
         :precondition (and 
@@ -369,9 +340,8 @@
         )
     )
 
-    ; This event is activated every time the waiter arrive at a table with the tray . It requires that the distance covererd is equal
-    ; to "real_distance" and the condition of carring tray is TRUE.  As effect the waiter stop moving and the distance covered 
-    ; is reinitialized to 0.
+    ;This event models the arrival of a waiter carrying a tray to its destination location 
+    ;and is activated by a process: (:process move-waiter-tray).
     (:event arrive-waiter-tray
         :parameters (?w - waiter ?t - tray)
         :precondition (and
