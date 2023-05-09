@@ -13,6 +13,8 @@
         bar table - location
     )
     
+    ; In PDDL predicates apply to a specific type of object, or to all objects. 
+    ; They are either true or false at any point in a plan and when not declared are assumed to be false.
     (:predicates 
         (ready ?d-drink)    ;Predicate to indicate if the drink is ready.
         (preparing ?d-drink)    ;Predicate to indicate if the drink is being prepared.
@@ -55,6 +57,7 @@
         (empty ?from - location)    ;Predicate to indicate if the location is empty.
     )
     
+    ; In PDDL functions are used to encode numeric state variables.
     (:functions 
         (duration_drink ?d - drink) ;Function to define the durantion of the preparation of drink.
     
@@ -264,7 +267,7 @@
         )
     )
 
-    ;This action represents the waiter robot loading a tray with a drink.
+    ;This action represents the waiter robot loading a tray with already a drink.
     (:action load-tray-biscuit
         :parameters (?w - waiter ?t - tray ?d - cold ?c - food ?l - bar)
         :precondition (and (together ?c ?d) (at_biscuit ?l ?c) (at_waiter ?w ?l) (at_tray ?l) (free_waiter ?w)
@@ -272,7 +275,7 @@
         :effect (and (biscuit_on_tray ?c ?t) (not (at_biscuit ?l ?c)) (increase (tray_capacity_biscuit ?t) 1.0))
     )
 
-    ;This action specifies a process for a waiter to load a tray with a biscuit.
+    ;This action specifies a process for a waiter to load a tray with already a biscuit.
     (:action load-tray-drink
         :parameters (?w - waiter ?t - tray ?d - drink  ?c - food ?l - bar)
         :precondition (and (at_drink ?l ?d) (at_waiter ?w ?l) (at_tray ?l) (free_waiter ?w)

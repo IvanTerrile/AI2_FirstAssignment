@@ -23,6 +23,7 @@ java -jar enhsp-20.jar
 ```
 ------------------------------------------
 ## Specific commands used to execute the problems
+The following commands are the ones used by us to execute the problems of the assignment, but they can be changed according to the needs of the user.
 #### Problem 1 (basic)
 ```
 java -jar enhsp-20.jar -o domain_basic.pddl -f problem_1_basic.pddl --delta_execuction 0.5 -planner opt-blind
