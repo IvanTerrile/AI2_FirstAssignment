@@ -1,4 +1,4 @@
-# AI2_FirstAssignment
+# AI2 First Assignment
 This repository contains the code for the first assignment of the Artificial Intelligence 2 course at the course of Robotic Engineering at the University of Genoa.
 
 ---------------------------------------
