@@ -71,4 +71,4 @@ java -jar enhsp-20.jar -o domain_optional.pddl -f problem_4_optional.pddl --delt
 * **Alessio Mura** - [alemuraa](https://github.com/alemuraa)
 * **Pisano Davide** - [DavidePisano](https://github.com/DavidePisano)
 * **Miriam Anna Ruggero** - [Miryru](https://github.com/Miryru)
-* **Terrile Ivan** - [Ivanterry00](https://github.com/Ivanterry00)
+* **Terrile Ivan** - [IvanTerrile](https://github.com/IvanTerrile)
